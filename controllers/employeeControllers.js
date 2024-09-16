@@ -2,6 +2,8 @@ const EmployeeModel = require('../models/employeeModel')
 const { generateToken } = require('../config/jwtToken')
 const asyncHandler = require('express-async-handler')
 const {generateRefreshToken} = require('../config/refreshToken')
+const bcrypt = require('bcrypt');
+
 
 const Register = asyncHandler( async(req,res)=>{
     const {mobile} = req.body
@@ -93,4 +95,41 @@ const deleteEmployee = asyncHandler(async(req,res)=>{
        }
 })
 
- module.exports = {Register,Login,update,getAllEmployees,getSingleEmployees,deleteEmployee}
+
+const changePassword = asyncHandler(async (req, res) => {
+    const { id } = req.params; // Employee ID from params
+    const { currentPassword, newPassword } = req.body; // Old and new password from request body
+
+    try {
+        // Find the employee by ID
+        const employee = await EmployeeModel.findById(id);
+
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        // Check if the old password matches
+        const isMatched = await employee.isPasswordMatched(currentPassword);
+        if (!isMatched) {
+            return res.status(400).json({ message: "Old password is incorrect" });
+        }
+
+        // Validate the new password length
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: "New password must be at least 6 characters long" });
+        }
+
+        // Hash and update the new password (bypassing pre-save hook)
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await EmployeeModel.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+
+        res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to change password", error: error.message });
+    }
+});
+
+
+ module.exports = {Register,Login,update,getAllEmployees,getSingleEmployees,deleteEmployee,changePassword}
