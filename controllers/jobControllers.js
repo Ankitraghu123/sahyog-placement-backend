@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const Employee = require('../models/employeeModel');
 
 const Create = asyncHandler(async (req, res) => {
-    const { companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,mail,jobFunction,city } = req.body;
+    const { companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,mail,jobFunction,city,state } = req.body;
 
     try {
         const company = await CompanyModel.findOne({ companyName });
@@ -15,7 +15,7 @@ const Create = asyncHandler(async (req, res) => {
         }
 
         const newJob = await JobModel.create({
-            companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,jobFunction,city,
+            companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,jobFunction,city,state,
             companyId: company._id ,mail
         });
 
@@ -56,7 +56,8 @@ const EditJob = asyncHandler(async (req, res) => {
         mail,
         jobFunction,
         interviewSheduled,
-        city
+        city,
+        state
     } = req.body;
 
     try {
@@ -65,6 +66,12 @@ const EditJob = asyncHandler(async (req, res) => {
         if (!job) {
             res.status(404);
             throw new Error('Job not found');
+        }
+
+        // If the job is already completed, prevent status change
+        if (job.status === 'completed' && status && status !== 'completed') {
+            res.status(400);
+            throw new Error('Cannot change status of a completed job');
         }
 
         // Store the previous allotment
@@ -97,10 +104,12 @@ const EditJob = asyncHandler(async (req, res) => {
         job.jobFunction = jobFunction || job.jobFunction;
         job.interviewSheduled = interviewSheduled || job.interviewSheduled;
         job.city = city || job.city;
+        job.state = state || job.state;
 
         // Update `allotedTo` only if it has changed
         if (allotedTo && allotedTo !== previousAllotedTo) {
             job.allotedTo = allotedTo;
+            job.status = 'Pending';
 
             // Handle previous allotment removal
             if (previousAllotedTo) {
@@ -129,6 +138,7 @@ const EditJob = asyncHandler(async (req, res) => {
         throw new Error(err.message);
     }
 });
+
 
 
 

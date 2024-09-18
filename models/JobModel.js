@@ -47,11 +47,12 @@ const jobSchema = new mongoose.Schema({
   },
   jobLocation: {
     type: String,
-    required: [true, 'Job location is required'],
+    // required: [true, 'Job location is required'],
     trim: true,
-    minlength: [2, 'Job location must be at least 2 characters long'],
+    // minlength: [2, 'Job location must be at least 2 characters long'],
   },
   city:String,
+  state:String,
   companyId:{
     type:mongoose.Schema.Types.ObjectId,
     ref:'Company'
