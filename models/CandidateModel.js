@@ -19,6 +19,13 @@ const candidateSchema = new mongoose.Schema({
         "Please enter a valid 10-digit mobile number"
     ],
   },
+  alternateMobile:{
+    type: String,
+    match: [
+        /^[0-9]{10}$/,
+        "Please enter a valid 10-digit mobile number"
+    ],
+  },
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -184,7 +191,13 @@ status:{
 },
 gender:{
   type:String
-}
+},
+city:{
+  type:String
+},
+state:{
+  type:String
+},
 
 }, {
   timestamps: true
