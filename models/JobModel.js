@@ -68,6 +68,12 @@ const jobSchema = new mongoose.Schema({
     type:mongoose.Schema.Types.ObjectId,
     ref:'Employee',
   },
+  allotedDate: {
+    type: Date,
+  },
+  completedDate:{
+    type:Date
+  },
   status:{
     type:String,
     default:"Pending"
@@ -85,6 +91,13 @@ const jobSchema = new mongoose.Schema({
   
 }, {
   timestamps: true
+});
+
+jobSchema.pre('save', function (next) {
+  if (this.isModified('allotedTo') && this.allotedTo) {
+    this.allotedDate = Date.now();
+  }
+  next();
 });
 
 const Job = mongoose.model('Job', jobSchema);

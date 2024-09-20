@@ -57,7 +57,8 @@ const EditJob = asyncHandler(async (req, res) => {
         jobFunction,
         interviewSheduled,
         city,
-        state
+        state,
+        isAdmin
     } = req.body;
 
     try {
@@ -69,9 +70,17 @@ const EditJob = asyncHandler(async (req, res) => {
         }
 
         // If the job is already completed, prevent status change
-        if (job.status === 'completed' && status && status !== 'completed') {
-            res.status(400);
-            throw new Error('Cannot change status of a completed job');
+        if(!isAdmin){
+            if (job.status === 'completed' && status && status !== 'completed') {
+                res.status(400);
+                throw new Error('Cannot change status of a completed job');
+            }
+        }
+
+        if(status && status === 'completed'){
+            job.completedDate = Date.now()
+        }else{
+            job.completedDate = ''
         }
 
         // Store the previous allotment
