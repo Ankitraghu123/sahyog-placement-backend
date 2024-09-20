@@ -56,6 +56,9 @@ const candidateSchema = new mongoose.Schema({
     required: [true, 'highest qualification is required is required'],
     trim: true,
   },
+  highestQualificationSubject:{
+    type:String
+  },
   // Post Graduation Fields
   postGradApplyYear: {
     type: String,

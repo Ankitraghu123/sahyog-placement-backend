@@ -87,6 +87,9 @@ const jobSchema = new mongoose.Schema({
   },
   interviewSheduled:{
     type:Date,
+  },
+  reason:{
+    type:String
   }
   
 }, {

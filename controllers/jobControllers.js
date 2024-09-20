@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const Employee = require('../models/employeeModel');
 
 const Create = asyncHandler(async (req, res) => {
-    const { companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,mail,jobFunction,city,state } = req.body;
+    const { companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,mail,jobFunction,city,state,reason } = req.body;
 
     try {
         const company = await CompanyModel.findOne({ companyName });
@@ -16,7 +16,7 @@ const Create = asyncHandler(async (req, res) => {
 
         const newJob = await JobModel.create({
             companyName,role,experienceRequired,skillsRequired,numberOfJobOpenings, salary,jobLocation,jobDescription,deadline,ageRequired,education,gender,allotedTo,jobFunction,city,state,
-            companyId: company._id ,mail
+            companyId: company._id ,mail,reason
         });
 
         company.jobs.push(newJob._id);
@@ -58,7 +58,8 @@ const EditJob = asyncHandler(async (req, res) => {
         interviewSheduled,
         city,
         state,
-        isAdmin
+        isAdmin,
+        reason
     } = req.body;
 
     try {
@@ -114,6 +115,7 @@ const EditJob = asyncHandler(async (req, res) => {
         job.interviewSheduled = interviewSheduled || job.interviewSheduled;
         job.city = city || job.city;
         job.state = state || job.state;
+        job.reason = reason || job.reason;
 
         // Update `allotedTo` only if it has changed
         if (allotedTo && allotedTo !== previousAllotedTo) {
