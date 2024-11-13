@@ -24,7 +24,7 @@ const createEnquiry = asyncHandler(async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail', // or another email service
     auth: {
-      user: 'devanshibilthare@gmail.com', // your email address
+      user: 'Sahyogconsultancysolutions@gmail.com', // your email address
       pass: 'aknqibzvlmsdypmf', // your email password
     },
   });
@@ -32,7 +32,7 @@ const createEnquiry = asyncHandler(async (req, res) => {
   // Define the email options
   const mailOptions = {
     from: email, // sender address
-    to: 'devanshibilthare@gmail.com', // owner's email address
+    to: 'Hr@sahyogplacement.com', // owner's email address
     subject: `sahyog placement New Enquiry: ${subject}`,
     text: `
       Name: ${name}
